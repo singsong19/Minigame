@@ -3,8 +3,7 @@
 const CARROT_SIZE = 80;
 const CARROT_COUNT = 5;
 const BUG_COUNT = 5;
-const GAME_DURATION_SEC = 5;//게임을 얼만큼의 시간동안 할건지 정의
-
+const GAME_DURATION_SEC = 5;
 const field = document.querySelector('.game__field');
 const fieldRect = field.getBoundingClientRect(); //field의 전체적인 사이즈와 위치까지 알수 있도록
 const gameBtn = document.querySelector('.game__button');
@@ -15,6 +14,11 @@ const popUp = document.querySelector('.pop-up');
 const popUpRefresh = document.querySelector('.pop-up__refresh');
 const popUpText = document.querySelector('.pop-up__message');
 
+const carrotSound = new Audio('./sound/carrot_pull.mp3'); //audio HTMLElement Return
+const bugSound = new Audio('./sound/bug_pull.mp3');
+const winSound = new Audio('./sound/game_win.mp3');
+const bgSound = new Audio('./sound/bg.mp3');
+const alertSound = new Audio('./sound/alert.wav');
 
 let started = false; //게임의 상태를 알고있는 변수 (시작)
 let score = 0; //최종 점수기억
@@ -65,23 +69,33 @@ function startGame(){
     showStopButton();
     showTimerAndScore();
     startGameTimer();
+    playSound(bgSound);
 }
 
 function stopGame() {
     started = false;
     stopGameTimer();
     hideGameButton();
-    showPopUpWithText('REPLAY?')
+    showPopUpWithText('REPLAY?');
+    playSound(alertSound);
+    stopSound(bgSound);
 }
 
 function finishGame(win){
     started = false;
     hideGameButton();
-    showPopUpWithText(win? 'YOU WON!!' : 'YOU LOST')
+    if(win){
+        playSound(winSound);
+    }else{
+        playSound(bugSound);
+    }
+    stopGameTimer();
+    stopSound(bgSound);
+    showPopUpWithText(win ? 'YOU WON!!' : 'YOU LOST');
 }
 
 function showStopButton(){
-    const icon = gameBtn.querySelector('.fas')
+    const icon = document.querySelector('.fas')
     icon.classList.add('fa-stop');
     icon.classList.remove('fa-play');
 }
@@ -104,7 +118,8 @@ function hidePopUp(){
     popUp.classList.add('pop-up--hide')
 }
 
-function reStartGame(){
+function StartGame(){
+    score = 0;
     initGame();
     showStopButton();
     showTimerAndScore();
@@ -127,18 +142,25 @@ function onFieldClick(event){
     if(target.matches('.carrot')){ //matches css selector가 맞는지 확인하는 함수!
         target.remove();
         score++;
+        playSound(carrotSound);
         updateScoreBoard();
     if(score === CARROT_COUNT){
         finishGame(true);
     }
     }else if(target.matches('.bug')){
-        stopGameTimer();
         finishGame(false);
         }
     } 
 
 
+function playSound(sound){
+    sound.currentTime = 0;
+    sound.play();
+}
 
+function stopSound(sound){
+    sound.pause();
+}
 
 function updateScoreBoard(){
     gameScore.innerText = CARROT_COUNT - score;
