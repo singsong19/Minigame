@@ -9,24 +9,29 @@
       src="https://use.fontawesome.com/releases/v5.10.2/js/all.js"
       data-auto-a11y="true"
     ></script>
-    <script src="./js/main.js"></script>
+    <script src="./js/main.js" defer></script> 
+    <!-- defer을 빼먹는다면! html이 준비되기 이전에 실행이 되기때문에 js가 안됨 
+    defer을 쓰지 않으면, window onloadListener를 등록해야함.  -->
+    
 </head>
 <body>
     <section class="game">
-        <header class="game__header">
+        <header>
             <button class="game__button">
                 <i class="fas fa-play"></i>
             </button>
-                <span class="game__timer">0:0</span>
-                <span class="game__score">9</span>
+                <span class="game__timer">00:00</span>
+                <span class="game__score">0</span>
         </header>
         <section class="game__field"></section>
     </section>
     <section class="pop-up pop-up--hide">
-        <button class="pop-up__refresh">
-            <i class="fas fa-redo-alt"></i>
-        </button>
-        <span class="pop-up__message">Hello</span>
+        <header>
+            <button class="pop-up__refresh">
+                <i class="fas fa-redo-alt"></i>
+            </button>
+            <span class="pop-up__message">Hello</span>
+        </header>
     </section>
 
 </body>
